@@ -3,7 +3,7 @@ import './App.css';
 
 import { BottomNav } from './components/BottomNav';
 import type { RouteId } from './routing';
-import { parseHashRoute, toHash } from './routing';
+import { parseHashRoute } from './routing';
 
 import { EmergencyPage } from './pages/EmergencyPage';
 import { HomePage } from './pages/HomePage';
@@ -33,20 +33,6 @@ export default function App() {
 
   return (
   <div className="appShell">
-      <header className="topBar">
-        <div className="topBar__brand" onClick={() => (window.location.hash = toHash({ id: 'home' }))}>
-          <span className="brandDot" />
-          <span className="brandName">Velora</span>
-          <span className="brandTag">Find medicines instantly</span>
-        </div>
-        <button
-          className="emergencyPill"
-          onClick={() => (window.location.hash = toHash({ id: 'emergency' }))}
-        >
-          Emergency
-        </button>
-      </header>
-
       <main className="main">
         {route.id === 'home' ? <HomePage /> : null}
         {route.id === 'search' ? <SearchResultsPage initialQuery={route.query} /> : null}
