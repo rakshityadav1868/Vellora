@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 
-import { Chip } from '../components/Chip';
 import { PharmacyCard } from '../components/PharmacyCard';
 import { searchPharmacies } from '../lib/search';
 import { storage } from '../lib/storage';
@@ -13,9 +12,9 @@ export function HomePage() {
   const dataState = useVeloraData();
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebouncedValue(query, 300);
-  const [openNow, setOpenNow] = useState(true);
-  const [is247, setIs247] = useState(false);
-  const [sortByDistance, setSortByDistance] = useState(false);
+  const openNow = true;
+  const is247 = false;
+  const sortByDistance = false;
   const [saved, setSaved] = useState(() => storage.getJSON<string[]>('savedPharmacies', []));
   const [suggestionsOpen, setSuggestionsOpen] = useState(true);
   const suggestions = useMemo(() => {
