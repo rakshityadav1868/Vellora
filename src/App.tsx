@@ -10,6 +10,8 @@ import { HomePage } from './pages/HomePage';
 import { PharmacyDetailPage } from './pages/PharmacyDetailPage';
 import { SavedPage } from './pages/SavedPage';
 import { SearchResultsPage } from './pages/SearchResultsPage';
+import { PrescriptionPage } from './pages/PrescriptionPage';
+import { TrackingPage } from './pages/TrackingPage';
 
 export default function App() {
   const [route, setRoute] = useState(() => parseHashRoute(window.location.hash));
@@ -24,15 +26,17 @@ export default function App() {
     if (
       route.id === 'home' ||
       route.id === 'search' ||
-  route.id === 'saved'
+      route.id === 'saved'
     ) {
       return route.id;
     }
     return 'home';
   }, [route.id]);
 
+  const hideBottomNav = route.id === 'prescription' || route.id === 'tracking' || route.id === 'pharmacy';
+
   return (
-  <div className="appShell">
+    <div className="appShell">
       <main className="main">
         {route.id === 'home' ? <HomePage /> : null}
         {route.id === 'search' ? <SearchResultsPage initialQuery={route.query} /> : null}
@@ -41,10 +45,12 @@ export default function App() {
         ) : null}
         {route.id === 'emergency' ? <EmergencyPage medicineQuery={route.query} /> : null}
         {route.id === 'saved' ? <SavedPage /> : null}
+        {route.id === 'prescription' ? <PrescriptionPage pharmacyId={route.pharmacyId} /> : null}
+        {route.id === 'tracking' ? <TrackingPage pharmacyId={route.pharmacyId} /> : null}
       </main>
 
-      <BottomNav active={activeTab} />
-
+      {!hideBottomNav && <BottomNav active={activeTab} />}
     </div>
   );
 }
+
