@@ -97,7 +97,7 @@ export function PharmacyDetailPage({ pharmacyId, medicineQuery }: { pharmacyId: 
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--primary)' }}>${finalPrice}</div>
+              <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--primary)' }}>₹{finalPrice}</div>
               {subsidyApplied && <div style={{ fontSize: '12px', color: 'var(--success)', fontWeight: 600 }}>Gov Subsidy Applied</div>}
             </div>
           </div>
@@ -134,7 +134,7 @@ export function PharmacyDetailPage({ pharmacyId, medicineQuery }: { pharmacyId: 
           <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'center' }}><Bike size={28} /></div>
           <div style={{ fontWeight: 800, fontSize: '16px' }}>Delivery</div>
           <div style={{ color: 'var(--muted)', fontSize: '13px', fontWeight: 600 }}>~ {pharmacy.etaMin + 15}m</div>
-          <div style={{ color: 'var(--text)', fontSize: '13px', fontWeight: 700, marginTop: '4px' }}>+$3.00</div>
+          <div style={{ color: 'var(--text)', fontSize: '13px', fontWeight: 700, marginTop: '4px' }}>+₹30.00</div>
         </div>
       </div>
 
@@ -152,7 +152,7 @@ export function PharmacyDetailPage({ pharmacyId, medicineQuery }: { pharmacyId: 
             const orderData = {
               medicineName: availability?.medicine ?? medicineQuery,
               price: price,
-              deliveryFee: deliveryOption === 'delivery' ? 3.00 : 0,
+              deliveryFee: deliveryOption === 'delivery' ? 30.00 : 0,
               subsidyApplied: subsidyApplied
             };
             localStorage.setItem('currentOrder', JSON.stringify(orderData));

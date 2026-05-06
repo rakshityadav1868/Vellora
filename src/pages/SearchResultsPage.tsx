@@ -8,6 +8,7 @@ import { useDebouncedValue } from '../lib/useDebouncedValue';
 import { useVeloraData } from '../lib/useVeloraData';
 import { toHash } from '../routing';
 import { Search, ArrowLeft, Pill, Clock, MapPin, Zap } from 'lucide-react';
+import { medicineMatchesQuery } from '../core/searchEngine';
 
 export function SearchResultsPage({ initialQuery }: { initialQuery?: string }) {
   const dataState = useVeloraData();
@@ -46,6 +47,34 @@ export function SearchResultsPage({ initialQuery }: { initialQuery?: string }) {
     const next = [q, ...recent.filter((x) => x !== q)].slice(0, 8);
     storage.setJSON('recentSearches', next);
   };
+
+  const priceRange = useMemo(() => {
+    if (!results.length) return null;
+    const prices: number[] = [];
+    results.forEach((p) => {
+      p.availability.forEach((a) => {
+        if (medicineMatchesQuery(a.medicine, finalQuery)) {
+          if (typeof a.price === 'number' && a.price > 0) {
+            prices.push(a.price);
+          }
+        }
+      });
+    });
+    if (prices.length === 0) return null;
+    return { min: Math.min(...prices), max: Math.max(...prices) };
+  }, [results, finalQuery]);
+
+  const isPrescriptionRequired = useMemo(() => {
+    if (!results.length) return false;
+    for (const p of results) {
+      for (const a of p.availability) {
+        if (medicineMatchesQuery(a.medicine, finalQuery)) {
+          if (a.requiresPrescription) return true;
+        }
+      }
+    }
+    return false;
+  }, [results, finalQuery]);
 
   useEffect(() => {
     const q = finalQuery.trim();
@@ -156,11 +185,17 @@ export function SearchResultsPage({ initialQuery }: { initialQuery?: string }) {
             <div>
               <h3 style={{ color: 'var(--primary)', margin: 0, fontSize: '20px' }}>{finalQuery}</h3>
               <p style={{ color: 'var(--primary)', fontWeight: 600, margin: '4px 0 0 0', opacity: 0.8, fontSize: '14px' }}>
-                Est. Price: <span style={{ color: 'var(--text-h)' }}>$5.00 - $15.00</span>
+                Est. Price: <span style={{ color: 'var(--text-h)' }}>
+                  {priceRange ? (priceRange.min === priceRange.max ? `₹${priceRange.min}` : `₹${priceRange.min} - ₹${priceRange.max}`) : 'Unavailable'}
+                </span>
               </p>
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                 <span className="subsidyBadge" style={{ background: 'var(--success)', color: 'white' }}>High Availability</span>
-                <span className="subsidyBadge" style={{ background: '#fef3c7', color: '#d97706' }}>Prescription needed</span>
+                {isPrescriptionRequired ? (
+                  <span className="subsidyBadge" style={{ background: '#fef3c7', color: '#d97706' }}>Prescription needed</span>
+                ) : (
+                  <span className="subsidyBadge" style={{ background: '#dcfce7', color: '#166534' }}>No Prescription needed</span>
+                )}
               </div>
             </div>
           </div>

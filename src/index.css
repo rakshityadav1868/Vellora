@@ -1,7 +1,7 @@
 :root {
   --text: #4a5568;
   --text-h: #1a202c;
-  --bg: #f0f4f8; /* Soft medical off-white */
+  --bg: #ffffff; /* White background */
   --border: #d9e2ec;
   --code-bg: #e2e8f0;
   
@@ -19,7 +19,7 @@
   --red: #ef4444; /* Emergency */
 
   /* Claymorphism Shadows (No gradients) */
-  --clay-bg: #f0f4f8;
+  --clay-bg: #ffffff;
   --clay-shadow: 
     6px 6px 12px rgba(163, 177, 198, 0.5), 
     -6px -6px 12px rgba(255, 255, 255, 0.9);
@@ -96,6 +96,7 @@ p {
   padding: 16px;
   margin-bottom: 16px;
   border: 1px solid rgba(255,255,255,0.5); /* subtle edge */
+  transition: all 0.2s ease;
 }
 
 .clay-btn {

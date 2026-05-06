@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { searchPharmacies } from '../lib/search';
 import { getAutocompleteSuggestions } from '../lib/suggest';
 import { useDebouncedValue } from '../lib/useDebouncedValue';
@@ -11,6 +11,10 @@ export function HomePage() {
   const [query, setQuery] = useState('');
   const debouncedQuery = useDebouncedValue(query, 300);
   const [suggestionsOpen, setSuggestionsOpen] = useState(true);
+  const [focusedCardId, setFocusedCardId] = useState<string | null>(null);
+  const [focusedHeroCard, setFocusedHeroCard] = useState<string | null>('hero-0');
+  const cardsRef = useRef<{ [key: string]: HTMLDivElement }>({});
+  const heroCardsRef = useRef<{ [key: string]: HTMLDivElement }>({});
 
   const suggestions = useMemo(() => {
     if (dataState.status !== 'ready') return [];
@@ -27,6 +31,82 @@ export function HomePage() {
     if (!debouncedQuery.trim()) return dataState.data.pharmacies.slice(0, 5); // Default to showing 5 nearby
     return searchPharmacies(dataState.data.pharmacies, debouncedQuery, { openNow: true, is247: false });
   }, [dataState, debouncedQuery]);
+
+  // Track focused card on scroll
+  useEffect(() => {
+    const ratios = new Map<string, number>();
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: [0, 0.2, 0.4, 0.6, 0.8, 1], 
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach(entry => ratios.set(entry.target.id, entry.intersectionRatio));
+      
+      let maxId: string | null = null;
+      let maxRatio = 0;
+      ratios.forEach((ratio, id) => {
+        if (ratio > maxRatio) {
+          maxRatio = ratio;
+          maxId = id;
+        }
+      });
+      
+      if (maxId && maxRatio > 0.2) {
+        setFocusedCardId(maxId);
+      }
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    // Observe all pharmacy cards
+    Object.values(cardsRef.current).forEach((card) => {
+      if (card) observer.observe(card);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [results]);
+
+  // Track focused hero card on horizontal scroll
+  useEffect(() => {
+    const ratios = new Map<string, number>();
+    const heroObserverOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: [0, 0.2, 0.4, 0.6, 0.8, 1], 
+    };
+
+    const heroObserverCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach(entry => ratios.set(entry.target.id, entry.intersectionRatio));
+      
+      let maxId: string | null = null;
+      let maxRatio = 0;
+      ratios.forEach((ratio, id) => {
+        if (ratio > maxRatio) {
+          maxRatio = ratio;
+          maxId = id;
+        }
+      });
+      
+      if (maxId && maxRatio > 0.3) {
+        setFocusedHeroCard(maxId);
+      }
+    };
+
+    const heroObserver = new IntersectionObserver(heroObserverCallback, heroObserverOptions);
+
+    // Observe all hero cards
+    Object.values(heroCardsRef.current).forEach((card) => {
+      if (card) heroObserver.observe(card);
+    });
+
+    return () => {
+      heroObserver.disconnect();
+    };
+  }, []);
 
   return (
     <div className="page">
@@ -47,18 +127,40 @@ export function HomePage() {
 
       {/* Hero / Highlight Cards */}
       <div className="horizontal-list hide-scrollbar">
-        <div className="emergencyCta" onClick={() => window.location.hash = toHash({ id: 'emergency' })} style={{ minWidth: '280px' }}>
+        <div 
+          id="hero-0"
+          ref={(el) => {
+            if (el) heroCardsRef.current['hero-0'] = el;
+          }}
+          className={`emergencyCta ${focusedHeroCard === 'hero-0' ? 'hero-card--focused' : ''}`}
+          onClick={() => window.location.hash = toHash({ id: 'emergency' })} 
+          style={{ minWidth: '280px' }}
+        >
           <div className="emergencyCta__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>Emergency Mode <Zap size={24} fill="currentColor" /></div>
           <div className="emergencyCta__sub">Find 24/7 pharmacies instantly</div>
         </div>
-        <div className="clay-card" style={{ minWidth: '260px', background: '#fef3c7', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div 
+          id="hero-1"
+          ref={(el) => {
+            if (el) heroCardsRef.current['hero-1'] = el;
+          }}
+          className={`clay-card ${focusedHeroCard === 'hero-1' ? 'hero-card--focused' : ''}`}
+          style={{ minWidth: '260px', background: '#fef3c7', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+        >
           <div style={{ fontSize: '18px', fontWeight: 800, color: '#d97706', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Zap size={20} fill="currentColor" />
             Fastest Pickup
           </div>
           <p style={{ marginTop: '8px', color: '#b45309', fontWeight: 600, fontSize: '14px' }}>Ready in 10 mins near you</p>
         </div>
-        <div className="clay-card" style={{ minWidth: '260px', background: '#dbeafe', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div 
+          id="hero-2"
+          ref={(el) => {
+            if (el) heroCardsRef.current['hero-2'] = el;
+          }}
+          className={`clay-card ${focusedHeroCard === 'hero-2' ? 'hero-card--focused' : ''}`}
+          style={{ minWidth: '260px', background: '#dbeafe', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+        >
           <div style={{ fontSize: '18px', fontWeight: 800, color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="8" width="18" height="12" rx="2" ry="2"/><path d="M12 8v13"/><path d="M19 12v7"/><path d="M5 12v7"/></svg>
             Delivery Available
@@ -106,13 +208,7 @@ export function HomePage() {
         </div>
       )}
 
-      {/* Quick Filters */}
-      <div className="chipRow hide-scrollbar">
-        <button className="clay-btn"><Pill size={18} style={{ marginRight: '6px' }} /> Pain Relief</button>
-        <button className="clay-btn"><Baby size={18} style={{ marginRight: '6px' }} /> Baby Care</button>
-        <button className="clay-btn"><BicepsFlexed size={18} style={{ marginRight: '6px' }} /> Vitamins</button>
-        <button className="clay-btn"><Thermometer size={18} style={{ marginRight: '6px' }} /> Cold & Flu</button>
-      </div>
+
 
       {/* Popular Medicines - Horizontal Scroll */}
       <div>
@@ -121,10 +217,10 @@ export function HomePage() {
         </div>
         <div className="horizontal-list hide-scrollbar">
           {[
-            { name: 'Panadol', type: 'Pain Relief', price: '$5.99', bg: '#fef3c7', icon: <Pill size={24} color="#d97706" /> },
-            { name: 'Amoxicillin', type: 'Antibiotic', price: '$12.49', bg: '#dbeafe', icon: <Stethoscope size={24} color="#1e40af" /> },
-            { name: 'Cetirizine', type: 'Allergy', price: '$8.50', bg: '#f3e8ff', icon: <Leaf size={24} color="#7e22ce" /> },
-            { name: 'Ibuprofen', type: 'Anti-inflammatory', price: '$9.99', bg: '#ffedd5', icon: <Bone size={24} color="#c2410c" /> },
+            { name: 'Panadol', type: 'Pain Relief', price: '₹50.00', bg: '#fef3c7', icon: <Pill size={24} color="#d97706" /> },
+            { name: 'Amoxicillin', type: 'Antibiotic', price: '₹120.00', bg: '#dbeafe', icon: <Stethoscope size={24} color="#1e40af" /> },
+            { name: 'Cetirizine', type: 'Allergy', price: '₹85.00', bg: '#f3e8ff', icon: <Leaf size={24} color="#7e22ce" /> },
+            { name: 'Ibuprofen', type: 'Anti-inflammatory', price: '₹95.00', bg: '#ffedd5', icon: <Bone size={24} color="#c2410c" /> },
           ].map((prod, i) => (
             <div key={i} className="clay-card" style={{ minWidth: '160px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: prod.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -152,11 +248,19 @@ export function HomePage() {
           {dataState.status === 'loading' && <div className="clay-card">Loading...</div>}
           {dataState.status === 'error' && <div className="clay-card">Error: {dataState.error}</div>}
           {dataState.status === 'ready' && results.map((p) => (
-            <div key={p.id} className="clay-card" onClick={() => window.location.hash = toHash({ id: 'pharmacy', pharmacyId: p.id, query: debouncedQuery })}>
+            <div 
+              key={p.id} 
+              id={`pharmacy-${p.id}`}
+              ref={(el) => {
+                if (el) cardsRef.current[p.id] = el;
+              }}
+              className={`clay-card ${focusedCardId === `pharmacy-${p.id}` ? 'card--focused' : ''}`}
+              onClick={() => window.location.hash = toHash({ id: 'pharmacy', pharmacyId: p.id, query: debouncedQuery })}
+            >
               <div className="cardTop">
                 <div>
                   <div className="cardTitle">{p.name}</div>
-                  <div style={{ color: 'var(--muted)', fontSize: '14px', fontWeight: 600 }}>{p.address} • {p.distanceKm} km away</div>
+                  <div style={{ color: 'var(--muted)', fontSize: '14px', fontWeight: 600 }}>{p.address} • {p.distanceKm.toFixed(2)} km away</div>
                 </div>
                 <div className="statusPill fast" style={{ background: '#fef3c7', color: '#d97706', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <Zap size={14} fill="currentColor" /> {p.distanceKm < 2 ? '10 min' : '25 min'}
