@@ -111,32 +111,36 @@ export function PharmacyDetailPage({ pharmacyId, medicineQuery }: { pharmacyId: 
         </div>
       )}
 
-      {/* Delivery vs Pickup Selection */}
-      <div className="sectionHeader" style={{ marginTop: '8px' }}>
-        <h2 className="sectionTitle">How to get it</h2>
-      </div>
-      <div style={{ display: 'flex', gap: '16px' }}>
-        <div 
-          className="clay-card" 
-          style={{ flex: 1, cursor: 'pointer', border: deliveryOption === 'pickup' ? '2px solid var(--primary)' : '2px solid transparent', background: deliveryOption === 'pickup' ? 'var(--bg)' : 'var(--surface)' }}
-          onClick={() => setDeliveryOption('pickup')}
-        >
-          <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'center' }}><Store size={28} /></div>
-          <div style={{ fontWeight: 800, fontSize: '16px' }}>Pickup</div>
-          <div style={{ color: 'var(--muted)', fontSize: '13px', fontWeight: 600 }}>Ready in 10m</div>
-          <div style={{ color: 'var(--success)', fontSize: '13px', fontWeight: 700, marginTop: '4px' }}>Free</div>
-        </div>
-        <div 
-          className="clay-card" 
-          style={{ flex: 1, cursor: 'pointer', border: deliveryOption === 'delivery' ? '2px solid var(--primary)' : '2px solid transparent', background: deliveryOption === 'delivery' ? 'var(--bg)' : 'var(--surface)' }}
-          onClick={() => setDeliveryOption('delivery')}
-        >
-          <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'center' }}><Bike size={28} /></div>
-          <div style={{ fontWeight: 800, fontSize: '16px' }}>Delivery</div>
-          <div style={{ color: 'var(--muted)', fontSize: '13px', fontWeight: 600 }}>~ {pharmacy.etaMin + 15}m</div>
-          <div style={{ color: 'var(--text)', fontSize: '13px', fontWeight: 700, marginTop: '4px' }}>+₹30.00</div>
-        </div>
-      </div>
+      {medicineQuery && (
+        <>
+          {/* Delivery vs Pickup Selection */}
+          <div className="sectionHeader" style={{ marginTop: '8px' }}>
+            <h2 className="sectionTitle">How to get it</h2>
+          </div>
+          <div style={{ display: 'flex', gap: '16px' }}>
+            <div 
+              className="clay-card" 
+              style={{ flex: 1, cursor: 'pointer', border: deliveryOption === 'pickup' ? '2px solid var(--primary)' : '2px solid transparent', background: deliveryOption === 'pickup' ? 'var(--bg)' : 'var(--surface)' }}
+              onClick={() => setDeliveryOption('pickup')}
+            >
+              <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'center' }}><Store size={28} /></div>
+              <div style={{ fontWeight: 800, fontSize: '16px' }}>Pickup</div>
+              <div style={{ color: 'var(--muted)', fontSize: '13px', fontWeight: 600 }}>Ready in 10m</div>
+              <div style={{ color: 'var(--success)', fontSize: '13px', fontWeight: 700, marginTop: '4px' }}>Free</div>
+            </div>
+            <div 
+              className="clay-card" 
+              style={{ flex: 1, cursor: 'pointer', border: deliveryOption === 'delivery' ? '2px solid var(--primary)' : '2px solid transparent', background: deliveryOption === 'delivery' ? 'var(--bg)' : 'var(--surface)' }}
+              onClick={() => setDeliveryOption('delivery')}
+            >
+              <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'center' }}><Bike size={28} /></div>
+              <div style={{ fontWeight: 800, fontSize: '16px' }}>Delivery</div>
+              <div style={{ color: 'var(--muted)', fontSize: '13px', fontWeight: 600 }}>~ {pharmacy.etaMin + 15}m</div>
+              <div style={{ color: 'var(--text)', fontSize: '13px', fontWeight: 700, marginTop: '4px' }}>+₹30.00</div>
+            </div>
+          </div>
+        </>
+      )}
 
       <div className="btnRow">
         <a className="clay-btn" style={{ flex: 1, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} href={pharmacy.phone ? `tel:${pharmacy.phone}` : undefined}><Phone size={18} /> Call</a>
@@ -144,26 +148,28 @@ export function PharmacyDetailPage({ pharmacyId, medicineQuery }: { pharmacyId: 
       </div>
 
       {/* Fixed bottom CTA */}
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, padding: '16px 20px', background: 'var(--bg)', boxShadow: '0 -4px 16px rgba(0,0,0,0.05)', zIndex: 100, borderTop: '1px solid var(--border)' }}>
-        <button 
-          className="clay-btn primary" 
-          style={{ width: '100%', padding: '18px', fontSize: '18px', borderRadius: '16px' }}
-          onClick={() => {
-            const orderData = {
-              medicineName: availability?.medicine ?? medicineQuery,
-              price: price,
-              deliveryFee: deliveryOption === 'delivery' ? 30.00 : 0,
-              subsidyApplied: subsidyApplied
-            };
-            localStorage.setItem('currentOrder', JSON.stringify(orderData));
+      {medicineQuery && (
+        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, padding: '16px 20px', background: 'var(--bg)', boxShadow: '0 -4px 16px rgba(0,0,0,0.05)', zIndex: 100, borderTop: '1px solid var(--border)' }}>
+          <button 
+            className="clay-btn primary" 
+            style={{ width: '100%', padding: '18px', fontSize: '18px', borderRadius: '16px' }}
+            onClick={() => {
+              const orderData = {
+                medicineName: availability?.medicine ?? medicineQuery,
+                price: price,
+                deliveryFee: deliveryOption === 'delivery' ? 30.00 : 0,
+                subsidyApplied: subsidyApplied
+              };
+              localStorage.setItem('currentOrder', JSON.stringify(orderData));
 
-            // If prescription is needed or to be safe, route to prescription upload
-            window.location.hash = toHash({ id: 'prescription', pharmacyId: pharmacy.id });
-          }}
-        >
-          Proceed to Checkout
-        </button>
-      </div>
+              // If prescription is needed or to be safe, route to prescription upload
+              window.location.hash = toHash({ id: 'prescription', pharmacyId: pharmacy.id });
+            }}
+          >
+            Proceed to Checkout
+          </button>
+        </div>
+      )}
     </div>
   );
 }
