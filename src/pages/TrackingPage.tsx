@@ -74,18 +74,18 @@ export function TrackingPage({ pharmacyId }: { pharmacyId?: string }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', fontWeight: 600 }}>
             <span style={{ color: 'var(--text)' }}>{orderData.medicineName}</span>
-            <span>${orderData.price.toFixed(2)}</span>
+            <span>₹{orderData.price.toFixed(2)}</span>
           </div>
           
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', fontWeight: 600 }}>
             <span style={{ color: 'var(--text)' }}>Delivery Fee</span>
-            <span>{orderData.deliveryFee > 0 ? `$${orderData.deliveryFee.toFixed(2)}` : 'Free'}</span>
+            <span>{orderData.deliveryFee > 0 ? `₹${orderData.deliveryFee.toFixed(2)}` : 'Free'}</span>
           </div>
 
           {orderData.subsidyApplied && (
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', fontWeight: 600, color: 'var(--success)' }}>
               <span>Gov Subsidy Applied</span>
-              <span>-${subsidyAmount.toFixed(2)}</span>
+              <span>-₹{subsidyAmount.toFixed(2)}</span>
             </div>
           )}
           
@@ -93,7 +93,7 @@ export function TrackingPage({ pharmacyId }: { pharmacyId?: string }) {
           
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>
             <span>Total Paid</span>
-            <span>${total.toFixed(2)}</span>
+            <span>₹{total.toFixed(2)}</span>
           </div>
         </div>
         
