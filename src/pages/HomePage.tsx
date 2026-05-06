@@ -4,7 +4,7 @@ import { getAutocompleteSuggestions } from '../lib/suggest';
 import { useDebouncedValue } from '../lib/useDebouncedValue';
 import { useVeloraData } from '../lib/useVeloraData';
 import { toHash } from '../routing';
-import { Activity, Pill, Baby, BicepsFlexed, Thermometer, Stethoscope, Leaf, Bone, Zap, Search, Bell } from 'lucide-react';
+import { Activity, Pill, Stethoscope, Leaf, Bone, Zap, Search, Bell } from 'lucide-react';
 
 export function HomePage() {
   const dataState = useVeloraData();
