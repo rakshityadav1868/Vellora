@@ -134,7 +134,7 @@ export function HomePage() {
           }}
           className={`emergencyCta ${focusedHeroCard === 'hero-0' ? 'hero-card--focused' : ''}`}
           onClick={() => window.location.hash = toHash({ id: 'emergency' })} 
-          style={{ minWidth: '280px' }}
+          style={{ minWidth: '260px', margin: 0 }}
         >
           <div className="emergencyCta__title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>Emergency Mode <Zap size={24} fill="currentColor" /></div>
           <div className="emergencyCta__sub">Find 24/7 pharmacies instantly</div>
@@ -145,7 +145,7 @@ export function HomePage() {
             if (el) heroCardsRef.current['hero-1'] = el;
           }}
           className={`clay-card ${focusedHeroCard === 'hero-1' ? 'hero-card--focused' : ''}`}
-          style={{ minWidth: '260px', background: '#fef3c7', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+          style={{ minWidth: '260px', margin: 0, padding: '16px', borderRadius: '16px', background: '#fef3c7', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
         >
           <div style={{ fontSize: '18px', fontWeight: 800, color: '#d97706', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Zap size={20} fill="currentColor" />
@@ -159,7 +159,7 @@ export function HomePage() {
             if (el) heroCardsRef.current['hero-2'] = el;
           }}
           className={`clay-card ${focusedHeroCard === 'hero-2' ? 'hero-card--focused' : ''}`}
-          style={{ minWidth: '260px', background: '#dbeafe', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+          style={{ minWidth: '260px', margin: 0, padding: '16px', borderRadius: '16px', background: '#dbeafe', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
         >
           <div style={{ fontSize: '18px', fontWeight: 800, color: '#1e40af', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="8" width="18" height="12" rx="2" ry="2"/><path d="M12 8v13"/><path d="M19 12v7"/><path d="M5 12v7"/></svg>
