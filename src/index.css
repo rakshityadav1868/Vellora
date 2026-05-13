@@ -165,3 +165,41 @@ p {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Custom Animations for Hero Cards */
+
+@keyframes zapPulse {
+  0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 2px rgba(217, 119, 6, 0.4)); }
+  50% { transform: scale(1.2) rotate(10deg); filter: drop-shadow(0 0 8px rgba(217, 119, 6, 0.8)); }
+  100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 2px rgba(217, 119, 6, 0.4)); }
+}
+
+@keyframes deliveryDrive {
+  0% { transform: translateX(0px) translateY(0px) rotate(0deg); }
+  25% { transform: translateX(4px) translateY(-2px) rotate(5deg); }
+  50% { transform: translateX(8px) translateY(0px) rotate(0deg); }
+  75% { transform: translateX(4px) translateY(2px) rotate(-5deg); }
+  100% { transform: translateX(0px) translateY(0px) rotate(0deg); }
+}
+
+@keyframes cardFloat {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); box-shadow: var(--clay-shadow), 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-zap {
+  animation: zapPulse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-delivery {
+  animation: deliveryDrive 3s ease-in-out infinite;
+}
+
+.hero-card-animated {
+  transition: all 0.3s ease;
+}
+
+.hero-card-animated:hover {
+  animation: cardFloat 3s ease-in-out infinite;
+}
